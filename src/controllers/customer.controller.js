@@ -26,3 +26,22 @@ export async function listCustomers(req, res) {
     res.status(500).send(err.message);
   }
 }
+
+export async function listCustomerByID(req, res) {
+  const { id } = req.params;
+
+  try {
+    const customer = await db.query("SELECT * FROM customers WHERE id=$1", [
+      id,
+    ]);
+
+    if (customer.rowCount === 0) {
+      res.sendStatus(404);
+      return;
+    }
+
+    res.status(200).send(customer.rows[0]);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+}
