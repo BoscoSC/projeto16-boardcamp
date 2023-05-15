@@ -6,11 +6,13 @@ export async function createGame(req, res) {
   try {
     await db.query(
       `
-    INSERT INTO games (name, info, "stockTotal", "pricePerDay")
+    INSERT INTO games (name, image, "stockTotal", "pricePerDay")
     VALUES ($1, $2, $3, $4);
     `,
       [name, image, stockTotal, pricePerDay]
     );
+
+    res.sendStatus(201);
   } catch (err) {
     res.status(500).send(err.message);
   }
