@@ -3,6 +3,7 @@ import { db } from "../configs/database.connection.js";
 
 export async function customerValidateSchema(req, res, next) {
   const customerInfo = req.body;
+  const { id } = req.params;
 
   const validate = customerSchema.validate(customerInfo);
 
@@ -15,11 +16,16 @@ export async function customerValidateSchema(req, res, next) {
     customerInfo.cpf,
   ]);
 
-  if (exist.rows.length > 0) {
+  if (exist.rows.length > 0 && exist.rows[0].id !== Number(id)) {
     res.sendStatus(409);
     return;
   }
 
-  res.locals.customerInfo = customerInfo;
+  if (id) {
+    res.locals.customerInfo = { ...customerInfo, id };
+  } else {
+    res.locals.customerInfo = customerInfo;
+  }
+
   next();
 }

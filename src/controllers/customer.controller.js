@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { db } from "../configs/database.connection.js";
 
 export async function createCustomer(req, res) {
@@ -21,7 +22,17 @@ export async function createCustomer(req, res) {
 export async function listCustomers(req, res) {
   try {
     const customerList = await db.query("SELECT * FROM customers");
-    res.status(200).send(customerList.rows);
+
+    const customerListFixed = customerList.rows.map((item) => {
+      const newItem = {
+        ...item,
+        birthday: dayjs(item.birthday).format("YYYY-MM-DD"),
+      };
+
+      return newItem;
+    });
+
+    res.status(200).send(customerListFixed);
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -40,7 +51,34 @@ export async function listCustomerByID(req, res) {
       return;
     }
 
-    res.status(200).send(customer.rows[0]);
+    const customerFixed = customer.rows.map((item) => {
+      const newItem = {
+        ...item,
+        birthday: dayjs(item.birthday).format("YYYY-MM-DD"),
+      };
+
+      return newItem;
+    });
+
+    res.status(200).send(customerFixed[0]);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+}
+
+export async function updateCustomer(req, res) {
+  const { name, phone, cpf, birthday, id } = res.locals.customerInfo;
+
+  try {
+    await db.query(
+      `
+    UPDATE customers SET name=$1, phone=$2, cpf=$3, birthday=$4
+    WHERE id=$5;
+    `,
+      [name, phone, cpf, birthday, id]
+    );
+
+    res.sendStatus(200);
   } catch (err) {
     res.status(500).send(err.message);
   }
