@@ -11,7 +11,7 @@ export async function gameValidateSchema(req, res, next) {
     return;
   }
 
-  const exist = await db.query("SELECT * from games WHERE name=$1", [
+  const exist = await db.query("SELECT * FROM games WHERE name=$1", [
     gameInfo.name,
   ]);
 
