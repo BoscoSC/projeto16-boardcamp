@@ -17,3 +17,13 @@ export async function createGame(req, res) {
     res.status(500).send(err.message);
   }
 }
+
+export async function listGames(req, res) {
+  try {
+    const gameList = await db.query("SELECT * FROM games");
+
+    res.status(200).send(gameList.rows);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+}

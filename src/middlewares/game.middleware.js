@@ -8,6 +8,7 @@ export async function gameValidateSchema(req, res, next) {
 
   if (validate.error) {
     res.sendStatus(400);
+    return;
   }
 
   const exist = await db.query("SELECT * from games WHERE name=$1", [
@@ -16,6 +17,7 @@ export async function gameValidateSchema(req, res, next) {
 
   if (exist.rows.length > 0) {
     res.sendStatus(409);
+    return;
   }
 
   res.locals.gameInfo = gameInfo;
